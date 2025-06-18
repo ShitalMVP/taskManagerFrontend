@@ -5,13 +5,18 @@ import {
 	Route,
 	Navigate,
 } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+
+// Auth pages
 import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
-import { Toaster } from "react-hot-toast";
-import DashboardContent from "./components/Dashboard/Dashboard"; // main dashboard content
-import DashboardLayout from "./components/Dashboard/DashboardLayout"; // layout (sidebar + outlet)
 import NotFound from "./components/Auth/NotFound";
+
+// Layout + Pages
+import DashboardLayout from "./components/Dashboard/DashboardLayout";
+import DashboardContent from "./components/Dashboard/Dashboard";
+import TaskManager from "./components/Tasks/TaskManager";
 
 function App() {
 	return (
@@ -23,20 +28,22 @@ function App() {
 					<Route path="/login" element={<Login />} />
 					<Route path="/signup" element={<Signup />} />
 
-					{/* Protected Dashboard Layout */}
+					{/* Protected Route Group under /tasks */}
 					<Route
-						path="/dashboard"
+						path="/tasks"
 						element={
 							<ProtectedRoute>
 								<DashboardLayout />
 							</ProtectedRoute>
 						}>
-						<Route index element={<DashboardContent />} />
-						{/* Nested 404 inside Dashboard */}
+						<Route path="dashboard" element={<DashboardContent />} />
+						<Route path="manageTask" element={<TaskManager />} />
+
+						{/* fallback inside /tasks */}
 						<Route path="*" element={<NotFound />} />
 					</Route>
 
-					{/* Global Fallback 404 */}
+					{/* Global fallback 404 */}
 					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</Router>

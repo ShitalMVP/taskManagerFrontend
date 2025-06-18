@@ -30,7 +30,7 @@ export default function Login() {
 				if (respone.data.success) {
 					toast.success(respone.message || "Login successful");
 					localStorage.setItem("token", respone.data.data);
-					navigate("/dashboard");
+					navigate("/tasks/dashboard");
 				} else {
 					toast.error(respone.message || "Login failed");
 				}
