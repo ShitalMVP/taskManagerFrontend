@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
-export default function DashboardContent() {
+export default function Dashboard() {
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
+	const navigate = useNavigate();
 
 	const [summary, setSummary] = useState({
 		total: 0,
@@ -12,6 +14,24 @@ export default function DashboardContent() {
 	});
 
 	const [tasks, setTasks] = useState([]);
+
+	// 🔐 Logout Handler
+	const handleLogout = async () => {
+		try {
+			const res = await axios.post(`${BASE_URL}/api/auth/logout`, {}, {
+				withCredentials: true,
+			});
+			if (res.data.success) {
+				toast.success("Logged out successfully");
+				navigate("/login");
+			} else {
+				toast.error("Logout failed");
+			}
+		} catch (err) {
+			console.error("Logout error:", err);
+			toast.error("Logout failed");
+		}
+	};
 
 	useEffect(() => {
 		const fetchSummary = async () => {
@@ -48,9 +68,15 @@ export default function DashboardContent() {
 
 	return (
 		<main className="flex-1 p-8">
-			{/* Header */}
+			{/* Header with Logout */}
 			<div className="flex justify-between items-center mb-8">
 				<h1 className="text-3xl font-semibold">Dashboard</h1>
+				<button
+					onClick={handleLogout}
+					className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+				>
+					Logout
+				</button>
 			</div>
 
 			{/* Summary Cards */}
@@ -61,15 +87,11 @@ export default function DashboardContent() {
 				</div>
 				<div className="bg-white p-6 rounded shadow">
 					<p className="text-gray-600">Completed</p>
-					<h3 className="text-2xl font-bold text-green-600">
-						{summary.completed}
-					</h3>
+					<h3 className="text-2xl font-bold text-green-600">{summary.completed}</h3>
 				</div>
 				<div className="bg-white p-6 rounded shadow">
 					<p className="text-gray-600">Pending</p>
-					<h3 className="text-2xl font-bold text-green-600">
-						{summary.pending}
-					</h3>
+					<h3 className="text-2xl font-bold text-green-600">{summary.pending}</h3>
 				</div>
 			</div>
 
@@ -84,7 +106,8 @@ export default function DashboardContent() {
 						{tasks.map((task) => (
 							<li
 								key={task._id}
-								className="border border-gray-200 rounded p-4 flex justify-between items-start">
+								className="border border-gray-200 rounded p-4 flex justify-between items-start"
+							>
 								<div>
 									<h3 className="text-lg font-medium">{task.title}</h3>
 									<p className="text-gray-500">{task.description}</p>
@@ -94,7 +117,8 @@ export default function DashboardContent() {
 										task.completed
 											? "bg-green-100 text-green-700"
 											: "bg-yellow-100 text-yellow-700"
-									}`}>
+									}`}
+								>
 									{task.completed ? "Completed" : "Pending"}
 								</span>
 							</li>
