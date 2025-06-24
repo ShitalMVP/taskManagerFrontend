@@ -47,61 +47,80 @@ export default function DashboardContent() {
 	}, []);
 
 	return (
-		<main className="flex-1 p-8">
-			{/* Header */}
-			<div className="flex justify-between items-center mb-8">
-				<h1 className="text-3xl font-semibold">Dashboard</h1>
-			</div>
+		<>
+			{summary.total > 0 ? (
+				<main className="flex-1 p-8">
+					{/* Header */}
+					<div className="flex justify-between items-center mb-8">
+						<h1 className="text-3xl font-semibold">Dashboard</h1>
+					</div>
 
-			{/* Summary Cards */}
-			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-				<div className="bg-white p-6 rounded shadow">
-					<p className="text-gray-600">Total Tasks</p>
-					<h3 className="text-2xl font-bold text-green-600">{summary.total}</h3>
-				</div>
-				<div className="bg-white p-6 rounded shadow">
-					<p className="text-gray-600">Completed</p>
-					<h3 className="text-2xl font-bold text-green-600">
-						{summary.completed}
-					</h3>
-				</div>
-				<div className="bg-white p-6 rounded shadow">
-					<p className="text-gray-600">Pending</p>
-					<h3 className="text-2xl font-bold text-green-600">
-						{summary.pending}
-					</h3>
-				</div>
-			</div>
+					{/* Summary Cards */}
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+						<div className="bg-white p-6 rounded shadow">
+							<p className="text-gray-600">Total Tasks</p>
+							<h3 className="text-2xl font-bold text-green-600">
+								{summary.total}
+							</h3>
+						</div>
+						<div className="bg-white p-6 rounded shadow">
+							<p className="text-gray-600">Completed</p>
+							<h3 className="text-2xl font-bold text-green-600">
+								{summary.completed}
+							</h3>
+						</div>
+						<div className="bg-white p-6 rounded shadow">
+							<p className="text-gray-600">Pending</p>
+							<h3 className="text-2xl font-bold text-green-600">
+								{summary.pending}
+							</h3>
+						</div>
+					</div>
 
-			{/* Task List */}
-			<div className="bg-white p-6 rounded shadow min-h-[300px]">
-				<h2 className="text-xl font-semibold mb-4">Your Tasks</h2>
-
-				{tasks.length === 0 ? (
-					<p className="text-gray-500">No tasks available.</p>
-				) : (
-					<ul className="space-y-4">
-						{tasks.map((task) => (
-							<li
-								key={task._id}
-								className="border border-gray-200 rounded p-4 flex justify-between items-start">
-								<div>
-									<h3 className="text-lg font-medium">{task.title}</h3>
-									<p className="text-gray-500">{task.description}</p>
-								</div>
-								<span
-									className={`text-sm font-semibold px-2 py-1 rounded ${
-										task.completed
-											? "bg-green-100 text-green-700"
-											: "bg-yellow-100 text-yellow-700"
-									}`}>
-									{task.completed ? "Completed" : "Pending"}
-								</span>
-							</li>
-						))}
-					</ul>
-				)}
-			</div>
-		</main>
+					{/* Task List */}
+					<div className="bg-white p-6 rounded shadow min-h-[300px]">
+						<h2 className="text-xl font-semibold mb-4">Your Tasks</h2>
+						{tasks.length === 0 ? (
+							<p className="text-gray-500">No tasks available.</p>
+						) : (
+							<ul className="space-y-4">
+								{tasks.map((task) => (
+									<li
+										key={task._id}
+										className="border border-gray-200 rounded p-4 flex justify-between items-start">
+										<div>
+											<h3 className="text-lg font-medium">{task.title}</h3>
+											<p className="text-gray-500">{task.description}</p>
+										</div>
+										<span
+											className={`text-sm font-semibold px-2 py-1 rounded ${
+												task.completed
+													? "bg-green-100 text-green-700"
+													: "bg-yellow-100 text-yellow-700"
+											}`}>
+											{task.completed ? "Completed" : "Pending"}
+										</span>
+									</li>
+								))}
+							</ul>
+						)}
+					</div>
+				</main>
+			) : (
+				<main className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
+					<div className="bg-white p-8 rounded shadow-md text-center max-w-md w-full">
+						<h1 className="text-3xl font-bold mb-4 text-green-600">Welcome!</h1>{" "}
+						<p className="text-gray-600 mb-4">
+							You don’t have any tasks yet. Let's get started!
+						</p>
+						<button
+							onClick={() => navigate("/add-task")}
+							className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+							Create Your First Task
+						</button>
+					</div>
+				</main>
+			)}
+		</>
 	);
 }

@@ -38,6 +38,7 @@ function App() {
 						}>
 						<Route path="dashboard" element={<DashboardContent />} />
 						<Route path="manageTask" element={<TaskManager />} />
+						<Route path="profile" element={<div>Profile Page</div>} />
 
 						{/* fallback inside /tasks */}
 						<Route path="*" element={<NotFound />} />
