@@ -7,11 +7,15 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
+
+
 // Auth pages
 import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import NotFound from "./components/Auth/NotFound";
+import EditTask from "./components/Auth/EditTask"; 
+
 
 // Layout + Pages
 import DashboardLayout from "./components/Dashboard/DashboardLayout";
@@ -27,6 +31,7 @@ function App() {
 					<Route path="/" element={<Navigate to="/login" />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/signup" element={<Signup />} />
+					
 
 					{/* Protected Route Group under /tasks */}
 					<Route
@@ -38,6 +43,12 @@ function App() {
 						}>
 						<Route path="dashboard" element={<DashboardContent />} />
 						<Route path="manageTask" element={<TaskManager />} />
+						<Route path="/tasks" element={<ProtectedRoute>...</ProtectedRoute>} />
+
+
+						  {/* ✅ Add this line for edit-task route */}
+                          <Route path="edit-task/:id" element={<EditTask />} />
+						
 
 						{/* fallback inside /tasks */}
 						<Route path="*" element={<NotFound />} />
@@ -51,5 +62,6 @@ function App() {
 		</>
 	);
 }
+
 
 export default App;

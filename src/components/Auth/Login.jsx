@@ -5,39 +5,44 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
 	const navigate = useNavigate();
-	const [email, setEmail] = useState("");
+	const [identifier, setIdentifier] = useState(""); // Can be username or email
 	const [password, setPassword] = useState("");
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
-		// Mock check (replace with real API call later)
+		if (!identifier || !password) {
+			toast.error("Fill in all fields");
+			return;
+		}
+
 		try {
-			if (!email || !password) {
-				toast.error("Fill in all fields");
-			} else {
-				const respone = await axios.post(
-					`${BASE_URL}/api/auth/login`,
-					{
-						email: email,
-						password: password,
-					},
-					{
-						withCredentials: true,
-					}
-				);
-				console.log(respone);
-				if (respone.data.success) {
-					toast.success(respone.message || "Login successful");
-					localStorage.setItem("token", respone.data.data);
-					navigate("/tasks/dashboard");
-				} else {
-					toast.error(respone.message || "Login failed");
+			const response = await axios.post(
+				`${BASE_URL}/api/auth/login`,
+				{
+					identifier, // username OR email
+					password,
+				},
+				{
+					withCredentials: true,
 				}
+			);
+
+			if (response.data.success) {
+				toast.success(response.data.message || "Login successful");
+				localStorage.setItem("token", response.data.data);
+				if (response.data.isNewUser) {
+					localStorage.setItem("isNewUser", "true");
+				} else {
+					localStorage.removeItem("isNewUser");
+				}
+				navigate("/tasks/dashboard");
+			} else {
+				toast.error(response.data.message || "Login failed");
 			}
 		} catch (error) {
-			console.log(error);
-			toast.error(error.message || "Error logging in");
+			console.error("Login Error:", error);
+			toast.error(error.response?.data?.message || "Login failed");
 		}
 	};
 
@@ -45,14 +50,15 @@ export default function Login() {
 		<div className="flex justify-center items-center h-screen bg-gray-100">
 			<form
 				onSubmit={handleLogin}
-				className="bg-white p-8 rounded shadow-md w-full max-w-sm">
+				className="bg-white p-8 rounded shadow-md w-full max-w-sm"
+			>
 				<h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 				<input
 					className="w-full px-4 py-2 mb-4 border rounded"
 					type="text"
-					placeholder="Email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
+					placeholder="Username or Email"
+					value={identifier}
+					onChange={(e) => setIdentifier(e.target.value)}
 				/>
 				<input
 					className="w-full px-4 py-2 mb-4 border rounded"
@@ -63,7 +69,8 @@ export default function Login() {
 				/>
 				<button
 					className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-					type="submit">
+					type="submit"
+				>
 					Login
 				</button>
 				<p className="mt-4 text-center text-sm">

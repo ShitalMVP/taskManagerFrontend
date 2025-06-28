@@ -4,24 +4,51 @@ import toast from "react-hot-toast";
 
 const TaskManager = () => {
 	const BASE_URL = import.meta.env.VITE_BASE_URL;
+	const [user, setUser] = useState(null);
 	const [tasks, setTasks] = useState([]);
 	const [formData, setFormData] = useState({ title: "", description: "" });
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [editId, setEditId] = useState(null);
+	
 	const [showConfirmDelete, setShowConfirmDelete] = useState({
 		show: false,
 		id: null,
 	});
-
+	console.log(user?.userId, 'user deatil')
+	const userId = user?.userId;
 	useEffect(() => {
+		const fetchUser = async () => {
+			try {
+				const res = await axios.get(`${BASE_URL}/api/auth/me`, {
+					withCredentials: true,
+				});
+				if (res.data.success) {
+					setUser(res.data.user); // this sets user._id (your userId)
+				}
+			} catch (err) {
+				console.error("Failed to load user", err);
+				toast.error("Failed to load profile");
+			}
+		};
+
+		fetchUser();
 		fetchTasks();
 	}, []);
 
+	// 🔁 2nd useEffect - fetch tasks only when user is loaded
+
+	useEffect(() => {
+		if (user?._id) {
+			fetchTasks(user._id);
+		}
+	}, [user]);
+
 	const fetchTasks = async () => {
 		try {
-			const res = await axios.get(`${BASE_URL}/api/tasks`, {
+			const res = await axios.get(`${BASE_URL}/api/tasks/getTasks/${userId}`, {
 				withCredentials: true,
 			});
+
 			setTasks(res.data.tasks);
 		} catch (err) {
 			console.error("Error fetching tasks:", err);
@@ -114,6 +141,22 @@ const TaskManager = () => {
 
 	return (
 		<div className="max-w-4xl mx-auto px-4 py-8">
+			{/* // Profile Header
+// <div className="flex justify-between items-center mb-8">
+// 	<div className="flex items-center space-x-4">
+// 		<div className="w-12 h-12 rounded-full bg-green-600 text-white flex items-center justify-center text-xl font-bold">
+// 			{user?.name?.[0].toUpperCase() || "U"}
+// 		</div>
+// 		<div>
+// 			<p className="text-lg font-semibold text-gray-800">
+// 				{user?.name || "User"}
+// 			</p>
+// 			<p className="text-sm text-gray-500">Welcome back!</p>
+// 		</div>
+// 	</div>
+// </div> */}
+
+
 			<h1 className="text-4xl font-bold text-green-700 mb-8">Task Manager</h1>
 			<button
 				onClick={() => openModal()}
@@ -125,11 +168,10 @@ const TaskManager = () => {
 				{tasks.map((task) => (
 					<div
 						key={task._id}
-						className={`relative rounded-xl border p-5 shadow-sm transition hover:shadow-md ${
-							task.completed
-								? "border-green-400 bg-green-50"
-								: "border-gray-200"
-						}`}>
+						className={`relative rounded-xl border p-5 shadow-sm transition hover:shadow-md ${task.completed
+							? "border-green-400 bg-green-50"
+							: "border-gray-200"
+							}`}>
 						<h2 className="text-lg font-semibold text-gray-800">
 							{task.title}
 						</h2>
@@ -139,11 +181,10 @@ const TaskManager = () => {
 							<div className="flex gap-2">
 								<button
 									onClick={() => toggleComplete(task._id, task.completed)}
-									className={`px-3 py-1.5 text-sm rounded-md font-medium transition ${
-										task.completed
-											? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-											: "bg-green-500 text-white hover:bg-green-600"
-									}`}>
+									className={`px-3 py-1.5 text-sm rounded-md font-medium transition ${task.completed
+										? "bg-gray-200 text-gray-800 hover:bg-gray-300"
+										: "bg-green-500 text-white hover:bg-green-600"
+										}`}>
 									{task.completed ? "Undo" : "Complete"}
 								</button>
 								<button
@@ -203,7 +244,7 @@ const TaskManager = () => {
 					</div>
 				</div>
 			)}
-
+fetchTasks 
 			{/* Confirm Delete Dialog */}
 			{showConfirmDelete.show && (
 				<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-20">

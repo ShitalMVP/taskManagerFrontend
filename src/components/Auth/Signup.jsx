@@ -13,12 +13,21 @@ export default function Signup() {
 
 	const handleSignup = async (e) => {
 		e.preventDefault();
-		try {
-			if (!username || !email || !password) {
-				toast.error("Please fill in all fields");
-				return;
-			}
 
+		// ✅ Email must end in @gmail.com or @*.in
+		const validEmail = /^[a-zA-Z0-9._%+-]+@(gmail\.com|[a-zA-Z0-9-]+\.(in))$/;
+
+		if (!username || !email || !password) {
+			toast.error("Please fill in all fields");
+			return;
+		}
+
+		if (!validEmail.test(email)) {
+			toast.error("Only @gmail.com or @*.in email addresses are allowed");
+			return;
+		}
+
+		try {
 			const response = await axios.post(`${BASE_URL}/api/auth/register`, {
 				username,
 				email,
@@ -43,12 +52,13 @@ export default function Signup() {
 		<div className="flex justify-center items-center h-screen bg-gray-100">
 			<form
 				onSubmit={handleSignup}
-				className="bg-white p-8 rounded shadow-md w-full max-w-sm">
+				className="bg-white p-8 rounded shadow-md w-full max-w-sm"
+			>
 				<h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
 				<input
 					className="w-full px-4 py-2 mb-4 border rounded"
 					type="text"
-					placeholder="username"
+					placeholder="Username"
 					value={username}
 					onChange={(e) => setusername(e.target.value)}
 				/>
@@ -60,6 +70,7 @@ export default function Signup() {
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 				/>
+
 				<input
 					className="w-full px-4 py-2 mb-4 border rounded"
 					type="password"
@@ -67,9 +78,11 @@ export default function Signup() {
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
 				/>
+
 				<button
 					className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
-					type="submit">
+					type="submit"
+				>
 					Sign Up
 				</button>
 				<p className="mt-4 text-center text-sm">
