@@ -193,6 +193,7 @@ export default function Dashboard() {
 	return (
 		<main className="flex-1 p-8">
 			{/* Header */}
+			{/* Header */}
 			<div className="flex justify-between items-center mb-8">
 				<h1 className="text-3xl font-semibold">Dashboard</h1>
 				<button
