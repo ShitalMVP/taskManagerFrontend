@@ -4,9 +4,9 @@ import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Signup() {
-	const BASE_URL = import.meta.env.VITE_BASE_URL;
-
 	const navigate = useNavigate();
+	const BASE_URL = import.meta.env.VITE_BASE_URL;
+	
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [username, setusername] = useState("");
@@ -36,17 +36,16 @@ export default function Signup() {
 
 			console.log(response);
 
-			if (response.data?.success) {
-				toast.success(response.data.message || "Signup successful");
-				navigate("/login");
-			} else {
-				toast.error(response.data.message || "Signup failed");
-			}
-		} catch (error) {
-			console.error(error);
-			toast.error(error.response?.data?.message || "Error signing up");
-		}
-	};
+			if (response.data.success) {
+      toast.success("Registered successfully");
+      navigate("/login");
+    } else {
+      toast.error(response.data.message || "Signup failed");
+    }
+  } catch (error) {
+    toast.error(error.response?.data?.error || "Error during signup");
+  }
+};
 
 	return (
 		<div className="flex justify-center items-center h-screen bg-gray-100">

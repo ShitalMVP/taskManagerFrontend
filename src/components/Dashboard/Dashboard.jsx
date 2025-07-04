@@ -51,9 +51,9 @@ export default function Dashboard() {
 	useEffect(() => {
 		const fetchSummary = async () => {
 			try {
-				const res = await axios.get(`${BASE_URL}/api/stats`, { withCredentials: true });
+				const res = await axios.get(`${BASE_URL}/api/auth/count`, { withCredentials: true });
 				if (res.data.success) {
-					setSummary(res.data.data);
+					setSummary(res.data);
 				}
 			} catch (err) {
 				toast.error("Failed to fetch summary");
@@ -207,7 +207,7 @@ export default function Dashboard() {
 			{/* Summary Cards */}
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 				{["Total", "Completed", "Pending"].map((label, i) => {
-					const value = [summary.total, summary.completed, summary.pending][i];
+					const value = [summary.totalTasks, summary.completedTasks, summary.pendingTasks][i];
 					return (
 						<div key={label} className="bg-white p-6 rounded shadow">
 							<p className="text-gray-600">{label} Tasks</p>
